@@ -1,0 +1,19 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'backend'
+    static_configs:
+      - targets: ['backend:8080']
+
+  - job_name: 'frontend1'
+    static_configs:
+      - targets: ['frontend1:80']
+
+  - job_name: 'frontend2'
+    static_configs:
+      - targets: ['frontend2:80']
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx:80']
