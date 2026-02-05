@@ -39,27 +39,14 @@ jobs:
           npm run build --prod --legacy-peer-deps
 
   deploy:
-    name: Deploy to Ubuntu VM
-    runs-on: ubuntu-latest
+    name: Deploy on Self-Hosted VM
+    runs-on: self-hosted
     needs: [backend, frontend]
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install SSH client
-        run: sudo apt-get update && sudo apt-get install -y openssh-client
-
-      - name: Setup SSH key
+      - name: Deploy with Docker Compose
+        working-directory: ~/my-project/task8
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-
-      - name: Deploy with docker-compose
-        run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no alexlin@192.168.0.165 "
-            cd ~/my-project/task8 &&
-            git pull &&
-            docker compose build &&
-            docker compose up -d
-          "
+          docker compose build
+          docker compose up -d
