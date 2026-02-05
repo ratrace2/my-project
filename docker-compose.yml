@@ -31,6 +31,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "18080:18080"
     depends_on:
       - frontend1
       - frontend2
@@ -47,7 +48,7 @@ services:
     depends_on:
       - nginx
     environment:
-      NGINX_STATUS_URL: http://nginx:8080/stub_status
+      NGINX_STATUS_URL: http://nginx:18080/stub_status
 
 
   kanban-postgres:
