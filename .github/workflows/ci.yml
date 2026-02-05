@@ -44,4 +44,22 @@ jobs:
     needs: [backend, frontend]
 
     steps:
-      - uses: a
+      - uses: actions/checkout@v4
+
+      - name: Install SSH client
+        run: sudo apt-get update && sudo apt-get install -y openssh-client
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+      - name: Deploy with docker-compose
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no alexlin@192.168.0.165 "
+            cd ~/my-project/task8 &&
+            git pull &&
+            docker compose build &&
+            docker compose up -d
+          "
