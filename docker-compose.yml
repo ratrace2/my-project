@@ -160,11 +160,3 @@ services:
       - loki
     networks:
       - task8_default
-
-
-volumes:
-  postgres_data:
-
-networks:
-  task8_default:
-    name: task8_default
