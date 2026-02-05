@@ -44,11 +44,11 @@ services:
     container_name: nginx_exporter
     ports:
       - "9113:9113"
-    environment:
-      NGINX_STATUS_URL=http://backend:8080/stub_status
-
     depends_on:
       - nginx
+    environment:
+      NGINX_STATUS_URL: http://nginx:8080/stub_status
+
 
   kanban-postgres:
     image: postgres:13
