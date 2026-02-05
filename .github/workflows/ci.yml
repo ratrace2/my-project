@@ -46,7 +46,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy with Docker Compose
-        working-directory: ~/my-project/task8
+        working-directory: /home/alexlin/my-project/task8
         run: |
           docker compose build
           docker compose up -d
