@@ -44,6 +44,8 @@ services:
     container_name: nginx_exporter
     ports:
       - "9113:9113"
+    environment:
+      NGINX_STATUS_URL: http://nginx:80/stub_status
     depends_on:
       - nginx
 
