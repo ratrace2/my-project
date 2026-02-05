@@ -12,24 +12,18 @@ services:
       SPRING_DATASOURCE_PASSWORD: mypassword
     depends_on:
       - kanban-postgres
-    logging:
-      driver: "json-file"
 
   frontend1:
     build: ./frontend-demo
     container_name: frontend1
     expose:
       - "80"
-    logging:
-      driver: "json-file"
 
   frontend2:
     build: ./frontend-demo
     container_name: frontend2
     expose:
       - "80"
-    logging:
-      driver: "json-file"
 
   nginx:
     image: nginx:alpine
@@ -44,8 +38,14 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
-    logging:
-      driver: "json-file"
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx_exporter
+    ports:
+      - "9113:9113"
+    depends_on:
+      - nginx
 
   kanban-postgres:
     image: postgres:13
@@ -59,13 +59,40 @@ services:
     ports:
       - "5432:5432"
 
+  postgres-exporter:
+    image: wrouesnel/postgres_exporter
+    container_name: postgres_exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://myuser:mypassword@kanban-postgres:5432/kanban?sslmode=disable"
+    ports:
+      - "9187:9187"
+    depends_on:
+      - kanban-postgres
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
       - "9090:9090"
     volumes:
-      - /home/alexlin/my-project/task7/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - nginx-exporter
+      - postgres-exporter
+      - node-exporter
+      - loki
+      - promtail
+      - grafana
 
   grafana:
     image: grafana/grafana:latest
@@ -74,8 +101,6 @@ services:
       - "3000:3000"
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
-    depends_on:
-      - loki
 
   loki:
     image: grafana/loki:2.8.2
