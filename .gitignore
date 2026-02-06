@@ -1,2 +1,6 @@
 certs/app.local.key
 certs/app.local.crt
+nginx/ssl/app.local-key.pem
+nginx/ssl/app.local.pem
+nginx/ssl/nginx.key
+nginx/ssl/nginx.crt
