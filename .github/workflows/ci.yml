@@ -45,6 +45,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Restore SSL certificates
+        run: |
+          mkdir -p certs
+          echo "${{ secrets.CERT_KEY }}" > certs/app.local.key
+          echo "${{ secrets.CERT_CRT }}" > certs/app.local.crt
+          mkdir -p nginx/ssl
+          echo "${{ secrets.APP_LOCAL_KEY }}" > nginx/ssl/app.local-key.pem
+          echo "${{ secrets.APP_LOCAL_CRT }}" > nginx/ssl/app.local.pem
+          echo "${{ secrets.NGINX_KEY }}" > nginx/ssl/nginx.key
+          echo "${{ secrets.NGINX_CRT }}" > nginx/ssl/nginx.crt
       - name: Deploy with Docker Compose
         working-directory: /home/alexlin/my-project/task8
         run: |
