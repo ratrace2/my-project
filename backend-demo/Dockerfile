@@ -1,4 +1,3 @@
-# Stage 1: Build
 FROM maven:3.6.3-jdk-8 AS build
 WORKDIR /app
 
@@ -7,7 +6,6 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime
 FROM eclipse-temurin:8-jre
 WORKDIR /app
 
